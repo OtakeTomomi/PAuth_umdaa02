@@ -1,3 +1,7 @@
+'''
+TrainEventDictionary_70.csvのUSERとSESSIONを数値データに変更する
+出力はdata_user_session_change.csv
+'''
 import pandas as pd
 import pickle
 import os
@@ -5,8 +9,6 @@ import os
 from tqdm import tqdm
 # import time
 
-
-# 全て数値データに変換が最初に行う処理
 
 
 # データの読み込み
@@ -56,25 +58,11 @@ def df_session_user_replace(df, session_ls, user_ls):
 
 
 # 実行
-# df_ori2 = df_session_user_replace(df_ori, session_list, user_list)
+df_ori2 = df_session_user_replace(df_ori, session_list, user_list)
 
 # data_user_session_change.csvへ書き出し
-# df_ori2.to_csv('orignal_data/data_user_session_change.csv', index=False)
-# print(df_ori2.head())
-
-
-# data_user_session_change.csvの読み込み
-df_us_change = pd.read_csv('orignal_data/data_user_session_change.csv')
-print(df_us_change.head())
-
-# ディレクトリの作成
-path = 'orignal_data/user_ID_data'
-os.makedirs(path, exist_ok=True)
-
-# userのIDでデータの切り分けを行い保存
-for i in tqdm(range(36)):
-    df_us_change2 = df_us_change.query(f'USER == {i}')
-    df_us_change2.to_csv(f'orignal_data/user_ID_data/user{i}.csv', index=False)
+df_ori2.to_csv('orignal_data/data_user_session_change.csv', index=False)
+print(df_ori2.head())
 
 
 
@@ -83,6 +71,7 @@ for i in tqdm(range(36)):
 # orignal_data/user_ID_data内にはuserIDごとにデータを分割して保存済み
 # 全体のデータとしてはdata_user_session_change.csvを参照
 # これをtestデータにも適用する必要がある
+# メモリ〜は2500だと足りないのでそれ以上にする必要がある気もする
 
 
 
