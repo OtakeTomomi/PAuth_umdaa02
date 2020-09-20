@@ -1,0 +1,135 @@
+元データ
+TrainEventDictionary_70.csv
+
+Columnの内訳
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 2754715 entries, 0 to 2754714
+Data columns (total 10 columns):
+ #   Column         Dtype
+---  ------         -----
+ 0   index1         int64
+ 1   index2         int64
+ 2   eventTime      int64
+ 3   USER           object
+ 4   SESSION        object
+ 5   eventPressure  float64
+ 6   eventType      int64
+ 7   positionX      int64
+ 8   positionY      int64
+ 9   tag            object
+dtypes: float64(1), int64(6), object(3)
+memory usage: 210.2+ MB
+
+各Columnの説明もどき：
+index1→SESSION内でのタッチデータの順番を表していると思われる
+index2→各SESSON内のindexごとのデータの長さを表している感じがする
+eventTime→時間
+USER→ユーザ
+SESSION→セッション
+eventPressure→圧力かな？
+eventType→532がtouch down, ５３３がmove finger on screen
+positionX→位置ｘ
+positionY→位置ｙ
+tag →要らんというか全部０なので意味がない
+
+
+
+USERの詳細 :
+{'Ph09USER001', 'Ph06USER005', 'Ph09USER003', 'Ph01USER001', 'Ph04USER002', 'Takeout', 'Ph06USER002', 'Ph05USER001',
+'Ph01USER004', 'Ph04USER001', 'Ph02USER004', 'Ph02USER003', 'Ph06USER001', 'Ph09USER002', 'Ph05USER002', 'Ph04USER003',
+'Ph05USER003', 'Ph10USER003', 'Ph08USER002', 'Ph06USER003', 'Ph02USER001', 'Ph05USER004', 'Ph02USER005', 'Ph10USER004',
+'Ph03USER001', 'Ph03USER003', 'Ph08USER003', 'Ph03USER002', 'Ph09USER004', 'Ph10USER002', 'Ph04USER004', 'Ph01USER002',
+'Ph08USER001', 'Ph10USER001', 'Ph02USER002', 'Ph01USER003'}
+
+USER情報の変更
+Ph01USER001 → 0 Ph01USER002 → 1 Ph01USER003 → 2 Ph01USER004 → 3 Ph02USER001 → 4 Ph02USER002 → 5 Ph02USER003 → 6
+Ph02USER004 → 7 Ph02USER005 → 8 Ph03USER001 → 9 Ph03USER002 → 10 Ph03USER003 → 11 Ph04USER001 → 12 Ph04USER002 → 13
+Ph04USER003 → 14 Ph04USER004 → 15 Ph05USER001 → 16 Ph05USER002 → 17 Ph05USER003 → 18 Ph05USER004 → 19 Ph06USER001 → 20
+Ph06USER002 → 21 Ph06USER003 → 22 Ph06USER005 → 23 Ph08USER001 → 24 Ph08USER002 → 25 Ph08USER003 → 26 Ph09USER001 → 27
+Ph09USER002 → 28 Ph09USER003 → 29 Ph09USER004 → 30 Ph10USER001 → 31 Ph10USER002 → 32 Ph10USER003 → 33 Ph10USER004 → 34
+Takeout → 35
+
+
+統計量など(ここではあまり意味なさそう)：
+             index1        index2     eventTime          USER       SESSION  eventPressure     eventType     positionX     positionY
+count  2.754715e+06  2.754715e+06  2.754715e+06  2.754715e+06  2.754715e+06   2.754715e+06  2.754715e+06  2.754715e+06  2.754715e+06
+mean   1.327256e+02  3.906361e+01  3.603185e+07  2.116206e+01  3.312665e+03   5.855260e-01  5.329128e+02  6.437325e+02  1.102717e+03
+std    2.569518e+02  1.771947e+02  3.940249e+07  1.220639e+01  2.105163e+03   8.767863e-02  2.820817e-01  3.510238e+02  3.816162e+02
+min    0.000000e+00  0.000000e+00  2.425700e+04  0.000000e+00  0.000000e+00   7.500000e-02  5.320000e+02  0.000000e+00  0.000000e+00
+25%    1.500000e+01  3.000000e+00  8.902040e+06  1.000000e+01  1.364000e+03   5.625000e-01  5.330000e+02  3.610000e+02  8.690000e+02
+50%    4.900000e+01  9.000000e+00  2.241398e+07  2.200000e+01  3.367000e+03   5.875000e-01  5.330000e+02  6.990000e+02  1.168000e+03
+75%    1.380000e+02  2.900000e+01  4.656506e+07  3.500000e+01  5.063000e+03   6.250000e-01  5.330000e+02  8.520000e+02  1.374000e+03
+max    3.171000e+03  5.174000e+03  2.548185e+08  3.500000e+01  6.940000e+03   1.412500e+00  5.330000e+02  1.919000e+03  1.919000e+03
+<class 'pandas.core.frame.DataFrame'>
+
+
+
+
+データ書き換え前参考：
+
+    index1  index2  eventTime         USER               SESSION  eventPressure  eventType  positionX  positionY tag
+0        0       0     112632  Ph01USER001  17_21_02_574-SESSION         0.6375        532        981        976   O
+1        0       1     112640  Ph01USER001  17_21_02_574-SESSION         0.6375        533        980        976   O
+2        0       2     112648  Ph01USER001  17_21_02_574-SESSION         0.6500        533        976        976   O
+3        0       3     112657  Ph01USER001  17_21_02_574-SESSION         0.6500        533        970        976   O
+4        0       4     112665  Ph01USER001  17_21_02_574-SESSION         0.6500        533        960        976   O
+5        0       5     112673  Ph01USER001  17_21_02_574-SESSION         0.6625        533        944        976   O
+6        0       6     112681  Ph01USER001  17_21_02_574-SESSION         0.6625        533        922        977   O
+7        0       7     112690  Ph01USER001  17_21_02_574-SESSION         0.6875        533        893        977   O
+8        0       8     112698  Ph01USER001  17_21_02_574-SESSION         0.6875        533        857        978   O
+9        0       9     112706  Ph01USER001  17_21_02_574-SESSION         0.6875        533        807        981   O
+10       0      10     112715  Ph01USER001  17_21_02_574-SESSION         0.6875        533        750        987   O
+11       0      11     112723  Ph01USER001  17_21_02_574-SESSION         0.6875        533        681        999   O
+12       0      12     112731  Ph01USER001  17_21_02_574-SESSION         0.6750        533        603       1022   O
+13       0      13     112739  Ph01USER001  17_21_02_574-SESSION         0.6500        533        528       1050   O
+14       0      14     112747  Ph01USER001  17_21_02_574-SESSION         0.5625        533        510       1057   O
+15       1       0     113650  Ph01USER001  17_21_02_574-SESSION         0.6500        532        501       1090   O
+
+
+
+データ書き換え後参考：
+    index1  index2  eventTime  USER  SESSION  eventPressure  eventType  positionX  positionY tag
+0        0       0     112632     0     4406         0.6375          0        981        976   O
+1        0       1     112640     0     4406         0.6375          2        980        976   O
+2        0       2     112648     0     4406         0.6500          2        976        976   O
+3        0       3     112657     0     4406         0.6500          2        970        976   O
+4        0       4     112665     0     4406         0.6500          2        960        976   O
+5        0       5     112673     0     4406         0.6625          2        944        976   O
+6        0       6     112681     0     4406         0.6625          2        922        977   O
+7        0       7     112690     0     4406         0.6875          2        893        977   O
+8        0       8     112698     0     4406         0.6875          2        857        978   O
+9        0       9     112706     0     4406         0.6875          2        807        981   O
+10       0      10     112715     0     4406         0.6875          2        750        987   O
+11       0      11     112723     0     4406         0.6875          2        681        999   O
+12       0      12     112731     0     4406         0.6750          2        603       1022   O
+13       0      13     112739     0     4406         0.6500          2        528       1050   O
+14       0      14     112747     0     4406         0.5625          1        510       1057   O
+15       1       0     113650     0     4406         0.6500          0        501       1090   O
+
+         index1  index2  eventTime  USER  SESSION  eventPressure  eventType  positionX  positionY tag
+2754710      10       1    8334756    35     1412          0.675          2        859       1672   O
+2754711      10       2    8334773    35     1412          0.675          2        857       1672   O
+2754712      10       3    8334790    35     1412          0.675          2        855       1670   O
+2754713      10       4    8334807    35     1412          0.650          2        853       1668   O
+2754714      10       5    8334815    35     1412          0.525          1        852       1667   O
+
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 2754715 entries, 0 to 2754714
+Data columns (total 10 columns):
+ #   Column         Dtype
+---  ------         -----
+ 0   index1         int64
+ 1   index2         int64
+ 2   eventTime      int64
+ 3   USER           int64
+ 4   SESSION        int64
+ 5   eventPressure  float64
+ 6   eventType      int64
+ 7   positionX      int64
+ 8   positionY      int64
+ 9   tag            object
+dtypes: float64(1), int64(8), object(1)
+memory usage: 210.2+ MB
+
+tagは要らないのでこの後削除
