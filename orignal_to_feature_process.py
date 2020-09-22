@@ -274,5 +274,7 @@ def preprocess(df):
     print(downInd[:10])
     print(pd.DataFrame(featMat).head())
 
+    # delete NaNs
+    featMat(isnan(featMat(:, 1)),:) = []
 
 preprocess(df)
