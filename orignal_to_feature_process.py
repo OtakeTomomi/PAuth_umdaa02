@@ -100,10 +100,10 @@ def preprocess(df):
         # time to next stroke (0 if last stroke in dataset) : 次のストロークまでの時間 (データセット内の最後のストロークの場合は 0)
         # if last stroke in dset or last stroke of this user, set to Nan :
         # データセット内の一番最後もしくはユーザのなかでの最後のデータの場合は　NaN を代入
-        if featMat[i, 3] == 0 or df2[downInd(i + 1), 'USER'] != featMat.iloc[i, 1]:
+        if featMat[i, 3] == 0 or df2[downInd[i + 1], 'USER'] != featMat.iloc[i, 1]:
             featMat[i, 3] = 'NaN'
         else:
-            featMat[i, 3] = df2(min([downInd(Nstrokes), downInd(i + 1)]), 'eventTime') - x_stroke.iloc[0, 2]
+            featMat[i, 3] = df2(min([downInd[Nstrokes], downInd[i + 1]]), 'eventTime') - x_stroke.iloc[0, 2]
 
         # time to last point of this stroke : このストロークの最後のポイントまでの時間
         featMat[i, 4] = x_stroke.iloc[-1, 2] - x_stroke.iloc[0, 2]
@@ -145,6 +145,7 @@ def preprocess(df):
         # Mean Resutlant Length (requires circular statistics toolbox)
         # 角度統計学あたりをみれば理解できそう…？
         # https://etiennecmb.github.io/brainpipe/_modules/brainpipe/stat/circstat.html
+        # もしくはhttps://etiennecmb.github.io/brainpipe/_modules/brainpipe/stat/circstat.html
         import pingouin as pg
         featMat[i, 10] = pg.circ_r(angl)
 
@@ -157,7 +158,7 @@ def preprocess(df):
         # FIXME: matlabのfilter関数の調査とpythonとの違いの調査後に修正
         # speed histogram : 速度ヒストグラム
         v = pairwDist / tdelta
-        featMat[i, 14: 16] = prctile(v, indivPrctlVals)
+        featMat[i, 14: 16] = np.percentile(v, indivPrctlVals, interpolation='midpoint')
 
         # FIXME: matlabのfilter関数の調査とpythonとの違いの調査後に修正
         # acceleration histogram : 加速度ヒストグラム
@@ -165,43 +166,44 @@ def preprocess(df):
         a = a / tdelta
         a[1] = []
 
-        # TODO: 未修正
+        # TODO: 動作確認未完了
         # full stat stuff
-        featMat[i, 17: 19] = prctile(a, indivPrctlVals)
+        # numpyとmatlabでデフォルトのinterpolationが異なるっぽい
+        # https://www.366service.com/jp/qa/e6eff47abbdd4bce6f0d93320f98aad3
+        featMat[i, 17:20] = np.percentile(a, indivPrctlVals, interpolation='midpoint')
 
         # TODO: 未修正
         # median velocity of last 3 points : 最後の3点の中央値速度
         featMat[i, 20] = math.median(v(max([end - 3,1]):end))
 
-        # TODO: 見直す必要がある
+        # TODO: 動作確認未完了
         # max dist. beween direct line and true line (with sign):直線と真線の最大距離（符号あり
-        xvek = x_stroke.iloc[:, 7]-x_stroke.iloc[0, 7]
-        yvek = x_stroke.iloc[:, 8]-x_stroke.iloc[0, 8]
+        xvek = x_stroke.iloc[:, 7] - x_stroke.iloc[0, 7]
+        yvek = x_stroke.iloc[:, 8] - x_stroke.iloc[0, 8]
 
-        # TODO: 未修正
+        # TODO: 動作確認未完了
         # project each vector on straight line : 各ベクトルを直線上に投影
         # compute unit line perpendicular to straight connection and project on this
         # 直線接続に垂直な単位線を計算して、投影
-        perVek = cross([xvek[-1], yvek[-1], 0], [0, 0, 1])
-        perVek = perVek / sqrt(([perVek(1), perVek(2)] * [perVek(1), perVek(2)]))
-        perVek[isnan(perVek)] = 0
+        perVek = np.cross([xvek[-1], yvek[-1], 0], [0, 0, 1])
+        perVek = perVek / np.sqrt(([perVek(1), perVek(2)] * [perVek(1), perVek(2)]))
+        perVek[math.isnan(perVek)] = 0
         # happens if vectors have lenght 0
 
-        # TODO: 未修正
+        # TODO: 動作確認未完了
         # all distances to direct line:直線までの全距離
-        projectOnPerpStraight = ...
-        xvek. * repmat(perVek(1), [length(xvek) 1]) + ...
-        yvek. * repmat(perVek(2), [length(xvek) 1])
+        projectOnPerpStraight = (xvek * np.repmat(perVek(1), [len(xvek), 1]) +
+                                 yvek * np.repmat(perVek(2), [len(xvek), 1]))
 
-        # TODO: 未修正
+        # TODO: findの調査
         # report maximal (absolute) distance: 最大(絶対)距離を報告
         absProj = abs(projectOnPerpStraight)
         maxind = find(absProj == max(absProj))
         featMat[i, 21] = projectOnPerpStraight(maxind(1))
 
-        # TODO:関数を調べる
+        # TODO: 動作確認未完了
         # stat of distances (bins are not the same for all strokes):距離の統計量 (ビンはすべてのストロークで同じではない)
-        featMat[i, 22: 24] = prctile(projectOnPerpStraight, indivPrctlVals)
+        featMat[i, 22:25] = np.percentile(projectOnPerpStraight, indivPrctlVals, interpolation='midpoint')
 
         # TODO: 動作確認未完了
         # average direction of ensemble of pairs: ペアのアンサンブルの平均方向
@@ -242,24 +244,24 @@ def preprocess(df):
 
         # TODO: 動作確認未完了
         # ratio between direct length and length of trajectory : 直接の長さと軌道の長さの比
-        featMat[i, 27] = featMat[i, 9] / featMat[i, 26]
+        featMat[i, 27] = featMat.iloc[i, 9] / featMat.iloc[i, 26]
 
         # TODO: 動作確認未完了
         # average velocity : 平均速度
-        featMat[i, 28] = featMat[i, 26] / featMat[i, 4]
+        featMat[i, 28] = featMat.iloc[i, 26] / featMat.iloc[i, 4]
 
-        # TODO: 動作確認が必要
+        # TODO: 動作確認未完了
         # average acc over first 5 points : 最初の 5 ポイントの平均アクセント
         featMat[i, 29] = math.median(a[0:min(5,len(a))])
 
-        # TODO: 動作確認が必要
+        # TODO: 動作確認未完了
         # pressure in the middle of the stroke: ストロークの途中の圧力
-        featMat[i, 30] = math.median(x_stroke[np.floor(npoints / 2):np.ceil(npoints / 2), 'eventPressure'])
+        featMat[i, 30] = math.median(x_stroke.loc[np.floor(npoints / 2):np.ceil(npoints / 2), 'eventPressure'])
 
-
-        # TODO: 確認必要、たぶんエリア情報なかった気がするから無理
+        # 要らない
+        '''
         # covered area in the middle of the stroke:ストロークの途中でカバーされた領域
-        # featMat[i, 31] = math.median(x_stroke[np.floor(npoints / 2):np.ceil(npoints / 2), col_area] )
+        # featMat[i, 31] = math.median(x_stroke[np.floor(npoints / 2):np.ceil(npoints / 2), 'col_area'] )
 
         # finger orientation in the middle of the stroke: ストロークの中央での指の向き
         # featMat[i, 32] = math.median(x_stroke[np.floor(npoints/2):np.ceil(npoints/2), 'col_Forient'])
@@ -269,12 +271,13 @@ def preprocess(df):
 
         # phone orientation: 電話の向き
         # featMat[i, 34] =  x_stroke.loc[0 ,'col_orient']
+        '''
 
     print(df.head())
     print(downInd[:10])
     print(pd.DataFrame(featMat).head())
 
     # delete NaNs
-    featMat(isnan(featMat(:, 1)),:) = []
+    # featMat(isnan(featMat(:, 1)),:) = []
 
 preprocess(df)
