@@ -1,4 +1,5 @@
 """
+手順としては２
 data_user_session_change.pyでUSERとSESSIONの値を数値に変換したdata_user_session_change.csvを使用
 ここではeventTypeの変更を行う
 eventTypeの説明
@@ -14,7 +15,7 @@ frank datasetにおけるactionのようにする
 
 出力はdata_event_change.csv(全体)
 
-ここでorignalデータを元に特徴抽出する処理はいったん完了するのでUSERの値を元にデータの切り分けを行う
+ここでorignalデータを元に特徴抽出するための処理はいったん完了するのでUSERの値を元にデータの切り分けを行う
 保存先はorignal_data/train_ori_pre/user*_pre.csv
 """
 

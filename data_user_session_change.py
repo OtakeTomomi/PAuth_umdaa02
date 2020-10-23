@@ -1,19 +1,21 @@
-'''
+"""
 TrainEventDictionary_70.csvのUSERとSESSIONを数値データに変更する
 出力はdata_user_session_change.csv
-'''
+
+手順的に１
+"""
 import pandas as pd
 import pickle
-import os
+# import os
 
 from tqdm import tqdm
 # import time
 
 
-
 # データの読み込み
 df_ori = pd.read_csv('umdaa02-touch/TrainEventDictionary_70.csv')
-# print(df_ori.head())
+# print(df_ori.head(16))
+
 
 # 各Columnに含まれる値？を確認
 # USERでデータを分けたいのでユーザのリストを作成
@@ -65,14 +67,12 @@ df_ori2.to_csv('orignal_data/data_user_session_change.csv', index=False)
 print(df_ori2.head())
 
 
-
 # この時点でorignalデータに含まれていた文字列は全て数値データに変換されたはず
 # Typeもしくはdiscribeで確認が必要
 # orignal_data/user_ID_data内にはuserIDごとにデータを分割して保存済み
 # 全体のデータとしてはdata_user_session_change.csvを参照
 # これをtestデータにも適用する必要がある
 # メモリ〜は2500だと足りないのでそれ以上にする必要がある気もする
-
 
 
 """
