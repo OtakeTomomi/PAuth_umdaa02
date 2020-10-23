@@ -28,6 +28,8 @@ raw feature columns
 
 feature descriptors
 
+object→intに変換したものを使用している
+
 
 """
 
@@ -99,10 +101,10 @@ def preprocess(df):
         # time to next stroke (0 if last stroke in data_set) : 次のストロークまでの時間 (データセット内の最後のストロークの場合は 0)
         # if last stroke in data_set or last stroke of this user, set to Nan :
         # データセット内の一番最後もしくはユーザのなかでの最後のデータの場合は　NaN を代入
-        if featMat[i, 3] == 0 or df2.loc[downInd[i+1], 'USER'] != featMat[i, 1]:
-            featMat[i, 3] = 'NaN'
-        else:
-            featMat[i, 3] = df2.loc[min([downInd[Nstrokes], downInd[i + 1]]), 'eventTime'] - x_stroke.iloc[0, 2]
+        # if featMat[i, 3] == 0 or df2.loc[downInd[i+1], 'USER'] != featMat[i, 1]:
+        #     featMat[i, 3] = 'NaN'
+        # else:
+        #     featMat[i, 3] = df2.loc[min([downInd[Nstrokes], downInd[i + 1]]), 'eventTime'] - x_stroke.iloc[0, 2]
 
         # time to last point of this stroke : このストロークの最後のポイントまでの時間
         featMat[i, 4] = x_stroke.iloc[-1, 2] - x_stroke.iloc[0, 2]
@@ -122,15 +124,15 @@ def preprocess(df):
         # TODO: 動作確認未完了
         # pairwise stuff→わからんので調査
         # x-displacement : X-変位
-        xdispl = signal.lfilter(x_stroke[0:-1], 1, x_stroke.iloc[:, 7])
+        xdispl = signal.lfilter(x_stroke[:], 1, x_stroke.iloc[:, 7])
         # xdispl[1] = []
         # y-displacement : Y-変位
-        ydispl = signal.lfilter(x_stroke[0:-1], 1, x_stroke.iloc[:, 8])
+        ydispl = signal.lfilter(x_stroke[:], 1, x_stroke.iloc[:, 8])
         # ydispl[1] = []
 
         # TODO: 動作確認未完了
         # pairwise time diffs : ペアワイズ時間の差分
-        tdelta = signal.lfilter(x_stroke[0:-1], 1, x_stroke[:, 2])
+        tdelta = signal.lfilter(x_stroke[:, :], 1, x_stroke[:, 2])
         # tdelta[1] = []
 
         # TODO: 動作確認未完了
@@ -169,7 +171,7 @@ def preprocess(df):
         # https://www.366service.com/jp/qa/e6eff47abbdd4bce6f0d93320f98aad3
         featMat[i, 17:20] = np.percentile(a, indivPrctlVals, interpolation='midpoint')
 
-        # TODO: 未修正
+        # TODO: 修正
         # median velocity of last 3 points : 最後の3点の中央値速度
         featMat[i, 20] = np.median(v[max(-4, 0):-1])
 
@@ -192,8 +194,9 @@ def preprocess(df):
         projectOnPerpStraight = (xvek * np.repmat(perVek(1), [len(xvek), 1]) +
                                  yvek * np.repmat(perVek(2), [len(xvek), 1]))
 
-        # TODO: findの調査
+        # TODO: 動作確認未完了
         # report maximal (absolute) distance: 最大(絶対)距離を報告
+        # https://datachemeng.com/matlab_to_python/
         absProj = abs(projectOnPerpStraight)
         maxind = np.where(absProj == max(absProj))
         featMat[i, 21] = projectOnPerpStraight(maxind[0])
@@ -261,6 +264,8 @@ def preprocess(df):
 
     # delete NaNs
     # featMat(np.isnan(featMat(:, 1)),:) = []
+    featmat_df = pd.DataFrame(featMat)
+    return featMat_df
 
 
-preprocess(df)
+featMat_df = preprocess(df)
