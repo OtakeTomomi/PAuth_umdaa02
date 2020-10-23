@@ -4,5 +4,9 @@
 
 Nexus 5	        1080 x 1920	xxhdpi	360 x 640 
 
+
+
+データセットは以下の論文より
+
 U. Mahbub, S. Sarkar, V. M. Patel and R. Chellappa, "Active user authentication for smartphones: A challenge data set and benchmark results", Proc. IEEE BTAS, pp. 1-8, 2016.
 
